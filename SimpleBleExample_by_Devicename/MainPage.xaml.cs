@@ -32,7 +32,7 @@ namespace SimpleBleExample_by_Devicename
          stopwatch = new Stopwatch();
          // !!!Your service !!!
          MyService_GUID = new Guid("0000ffe0-0000-1000-8000-00805f9b34fb");
-        //!!!Your characteristic!!!
+         //!!!Your characteristic!!!
          MYCharacteristic_GUID = new Guid("{0000ffe1-0000-1000-8000-00805f9b34fb}");
          StartWatching();
       }
@@ -41,7 +41,11 @@ namespace SimpleBleExample_by_Devicename
       {
          // Create Bluetooth Listener
          var watcher = new BluetoothLEAdvertisementWatcher
-         {            
+         {  
+            //Set scanning mode.
+            //Active means get all the possible information in the advertisement data.
+            //Use Passive if you already know the Ble-Address and only want to connect.
+            //Scanning mode Passive is Action lot faster.
             ScanningMode = BluetoothLEScanningMode.Active
          };
          // Register callback for when we see an advertisements
@@ -54,7 +58,7 @@ namespace SimpleBleExample_by_Devicename
       private async void OnAdvertisementReceivedAsync(BluetoothLEAdvertisementWatcher watcher,
                                                       BluetoothLEAdvertisementReceivedEventArgs eventArgs)
       {
-         // Filter for specific Device
+         // Filter for specific Device by name
          if (eventArgs.Advertisement.LocalName == bleDevicName)
          {
             watcher.Stop();
@@ -103,7 +107,7 @@ namespace SimpleBleExample_by_Devicename
                                  
                                  WriteDescriptorMilis = stopwatch.ElapsedMilliseconds;
                                  Debug.WriteLine("Successfully registered; for notifications in " +
-                                                (WriteDescriptorMilis - characteristicFoundMilis));
+                                                (WriteDescriptorMilis - characteristicFoundMilis) + " ms");
                                  charac.ValueChanged += Charac_ValueChanged; ;
                               }
                               else
