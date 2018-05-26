@@ -135,7 +135,8 @@ namespace SimpleBleExample_by_Devicename
       private static void Charac_ValueChanged(GattCharacteristic sender, GattValueChangedEventArgs args)
       {
          CryptographicBuffer.CopyToByteArray(args.CharacteristicValue, out byte[] data);
-         //If data is raw bytes skip all the next lines and use data byte array.
+         //If data is raw bytes skip all the next lines and use data byte array. Or
+         //CryptographicBuffer.CopyToByteArray(args.CharacteristicValue, out byte[] dataArray);
          string dataFromNotify;
          try
          {
