@@ -99,20 +99,49 @@ namespace SimpleBleExample_by_Devicename
                            characteristicFoundMilis = stopwatch.ElapsedMilliseconds;
                            Debug.WriteLine("Characteristic found in " +
                                           (characteristicFoundMilis - serviceFoundMilis) + " ms");
+
+                           var descriptorValue = GattClientCharacteristicConfigurationDescriptorValue.None;
+                           GattCharacteristicProperties properties = charac.CharacteristicProperties;
+                           string descriptor = string.Empty;
+
+                           if (properties.HasFlag(GattCharacteristicProperties.Read))
+                           {
+                              Debug.WriteLine("This characteristic supports reading .");
+                           }
+                           if (properties.HasFlag(GattCharacteristicProperties.Write))
+                           {
+                              Debug.WriteLine("This characteristic supports writing .");
+                           }
+                           if (properties.HasFlag(GattCharacteristicProperties.WriteWithoutResponse))
+                           {
+                              Debug.WriteLine("This characteristic supports writing  whithout responce.");
+                           }
+                           if (properties.HasFlag(GattCharacteristicProperties.Notify))
+                           {
+                              descriptor = "notifications";
+                              descriptorValue = GattClientCharacteristicConfigurationDescriptorValue.Notify;
+                              Debug.WriteLine("This characteristic supports subscribing to notifications.");
+                           }
+                           if (properties.HasFlag(GattCharacteristicProperties.Indicate))
+                           {
+                              descriptor = "indications";
+                              descriptorValue = GattClientCharacteristicConfigurationDescriptorValue.Indicate;
+                              Debug.WriteLine("This characteristic supports subscribing to Indication");
+                           }
                            try
                            {
-                              var notifyResult = await charac.WriteClientCharacteristicConfigurationDescriptorAsync(GattClientCharacteristicConfigurationDescriptorValue.Notify);
-                              if (notifyResult == GattCommunicationStatus.Success)
+                              var descriptorWriteResult = await charac.WriteClientCharacteristicConfigurationDescriptorAsync(descriptorValue);
+                              if (descriptorWriteResult == GattCommunicationStatus.Success)
                               {
                                  
                                  WriteDescriptorMilis = stopwatch.ElapsedMilliseconds;
-                                 Debug.WriteLine("Successfully registered; for notifications in " +
+                                 Debug.WriteLine("Successfully registered for " + descriptor +" in " +
                                                 (WriteDescriptorMilis - characteristicFoundMilis) + " ms");
                                  charac.ValueChanged += Charac_ValueChanged; ;
                               }
                               else
                               {
-                                 Debug.WriteLine($"Error registering for notifications: {result}");
+                                 Debug.WriteLine($"Error registering for " + descriptor + ": {result}");
                                  device.Dispose();
                                  device = null;
                                  watcher.Start();//Start watcher again for retry
